@@ -1,17 +1,32 @@
 # PrivateSelfHostedChat
 
-Private self-hosted chat with voice calls, auto-rotating passwords and Telegram bot management. Deploy on any VPS in 3 minutes with a single command.
+Private self-hosted chat with P2P voice calls, auto-rotating passwords and Telegram bot management.
+
+Built from scratch on Node.js + Socket.io + WebRTC.
 
 ## Features
 
 - Anonymous chat - no registration, no accounts
-- P2P voice calls (WebRTC) - server never hears the conversation
-- Token-based authentication with custom login page
+- P2P voice calls (WebRTC) with audio level indicators
+- Token-based authentication
 - Auto-rotating password every hour
-- Telegram bot with one-tap chat reset
-- File sharing up to 50 MB
+- Telegram bot with one-tap reset
+- File sharing up to 50 MB (drag and drop)
 - HTTPS with automatic Let's Encrypt certificate
-- Backup and restore with a single command
+- Zero disk storage - everything in RAM only
+- Auto-kick users on password change
+- Backup and restore
+
+## Architecture
+
+```
+Browser -> Caddy (HTTPS) -> Nginx -> PSChat (auth + chat + calls)
+Calls -> WebRTC P2P (direct between browsers)
+TURN -> Coturn (fallback)
+Bot -> Telegram -> auto-reset every hour
+```
+
+Only 4 containers: pschat, nginx, caddy, coturn.
 
 ## Requirements
 
@@ -21,65 +36,35 @@ Private self-hosted chat with voice calls, auto-rotating passwords and Telegram 
 - Telegram bot ([@BotFather](https://t.me/BotFather))
 - Your Chat ID ([@userinfobot](https://t.me/userinfobot))
 
-## Installation
+## Install
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tw1xtorCHT/PrivateSelfHostedChat/main/install.sh | bash
 ```
 
-The script will ask for:
-- Telegram bot token
-- Your Chat ID
-- Domain name
-
-Everything else installs automatically in about 3 minutes.
+The script asks for bot token, Chat ID and domain. Everything else is automatic.
 
 ## Management
 
-### Telegram bot
-Send `/start` to your bot to get a button for resetting the chat and generating a new password.
+Send `/start` to your Telegram bot for a reset button.
 
-### Server commands
-
-Reset chat and change password:
 ```bash
-/root/rotate_password.sh
-```
-
-Backup:
-```bash
-/root/backup.sh
-```
-
-Restore:
-```bash
-/root/restore.sh
-```
-
-## Architecture
-
-```
-Browser -> HTTPS (Caddy) -> Nginx -> Auth Server (token check)
-                                  -> Chat (m1k1o/chat)
-                                  -> Signal Server (calls)
-Calls -> WebRTC P2P (direct between browsers)
-TURN -> Coturn (fallback if P2P fails)
-Management -> Telegram Bot -> auto-reset every hour
+/root/rotate_password.sh  # new password
+/root/backup.sh           # backup
 ```
 
 ## Security
 
-- Messages stored in RAM only, nothing written to disk
-- Full wipe on container restart
-- Open source, no backdoors, no analytics, no trackers
-- P2P calls, server only connects peers, never hears audio
-- Protection level comparable to standard Telegram chats
+- Messages and files in RAM only
+- Full wipe on restart
+- Open source, no backdoors
+- P2P calls - server never hears audio
+- Auto-kick on password change
 
 ## Credits
 
-- [m1k1o/chat](https://github.com/m1k1o/chat) - chat engine (Socket.io, Node.js)
 - [Caddy](https://caddyserver.com) - automatic HTTPS
-- [coturn](https://github.com/coturn/coturn) - TURN server for calls
+- [coturn](https://github.com/coturn/coturn) - TURN server
 
 ## License
 

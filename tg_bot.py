@@ -8,19 +8,18 @@ TG_CHAT_ID = YOUR_CHAT_ID
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != TG_CHAT_ID:
         return
-    keyboard = [[InlineKeyboardButton("🔄 Сбросить чат и обновить пароль", callback_data="reset")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Управление приватным чатом:", reply_markup=reply_markup)
+    keyboard = [[InlineKeyboardButton("Reset chat and change password", callback_data="reset")]]
+    await update.message.reply_text("Chat management:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     if query.from_user.id != TG_CHAT_ID:
         return
     await query.answer()
-    await query.edit_message_text("⏳ Сбрасываю чат и генерирую новый пароль...")
-    subprocess.run(["docker", "restart", "anon_chat"])
+    await query.edit_message_text("Resetting chat...")
+    subprocess.run(["docker", "restart", "pschat"])
     subprocess.run(["/root/rotate_chat_access.sh"])
-    await query.edit_message_text("✅ Готово! Новый пароль отправлен.")
+    await query.edit_message_text("Done! New password sent.")
 
 app = Application.builder().token(TG_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
