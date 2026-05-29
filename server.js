@@ -107,6 +107,7 @@ io.on("connection", (socket) => {
     const name = (data.nick || "").trim();
     if (!name) { socket.emit("force-login", "Nick cannot be empty"); return; }
     if (users[name]) { socket.emit("force-login", "Nick already taken"); return; }
+    if (Object.keys(users).length >= 2) { socket.emit("force-login", "Chat is full (max 2)"); return; }
     nick = name;
     users[nick] = socket.id;
     socket.join("chat");
