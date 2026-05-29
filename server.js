@@ -98,6 +98,16 @@ app.use((req, res, next) => {
   res.redirect("/login");
 });
 
+// TURN config endpoint
+app.get("/turn-config", (req, res) => {
+  try {
+    const data = fs.readFileSync("/app/turn_credentials.txt", "utf8");
+    const m = data.match(/TURN_PASS=(.+)/);
+    const pass = m ? m[1].trim() : "";
+    res.json({ url: "turn:" + req.headers.host + ":3478", user: "chat", pass: pass });
+  } catch(e) { res.json({}); }
+});
+
 // Static files (after auth check)
 app.use(express.static(path.join(__dirname, "public")));
 

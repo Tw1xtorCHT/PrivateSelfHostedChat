@@ -94,10 +94,10 @@ var typingUsers={};
 // CALL VARS
 var pc=null,localStream=null,isMuted=false,callTimer=null,callSec=0;
 var audioCtx=null,localAn=null,remoteAn=null,levelRAF=null;
-var iceConfig={iceServers:[{urls:"stun:stun.l.google.com:19302"}]};
+var iceConfig={iceServers:[{urls:"stun:stun.l.google.com:19302"}],iceTransportPolicy:"all"};
 
 // Try to load TURN config
-fetch("/turn-config").then(r=>r.json()).then(d=>{if(d.url)iceConfig.iceServers.push({urls:d.url,username:d.user,credential:d.pass})}).catch(()=>{});
+fetch("/turn-config").then(r=>r.json()).then(d=>{if(d.url){iceConfig.iceServers=[{urls:d.url,username:d.user,credential:d.pass}];iceConfig.iceTransportPolicy="relay"}}).catch(()=>{});
 
 // CHAT
 function joinChat(){
