@@ -30,9 +30,20 @@ function isBlocked(ip) {
 function addFail(ip) {
   if (!loginAttempts[ip]) loginAttempts[ip] = { fails: 0 };
   loginAttempts[ip].fails++;
+  loginAttempts[ip].lastTry = Date.now();
   if (loginAttempts[ip].fails >= 3) { loginAttempts[ip].blocked = true; loginAttempts[ip].blockedAt = Date.now(); }
 }
 function resetFails(ip) { delete loginAttempts[ip]; }
+
+// Очистка старых записей каждые 10 минут
+setInterval(() => {
+  const now = Date.now();
+  for (const ip in loginAttempts) {
+    const rec = loginAttempts[ip];
+    if (rec.blocked && now - rec.blockedAt >= 5 * 60 * 1000) delete loginAttempts[ip];
+    else if (!rec.blocked && now - (rec.lastTry || 0) >= 10 * 60 * 1000) delete loginAttempts[ip];
+  }
+}, 10 * 60 * 1000);
 
 // Get current password from file
 function getPasswordHash() {
