@@ -7,9 +7,16 @@ NEW_PASS=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 8)
 LOGIN="user"
 
 # Обновляем пароль для нового движка
-echo "${LOGIN}:${NEW_PASS}" > /root/pschat/credentials.txt
+HASH=$(echo -n "${NEW_PASS}" | sha256sum | cut -d" " -f1)
+echo "${LOGIN}:${HASH}" > /root/pschat/credentials.txt
 
 # Перезапускаем чат (сбрасывает токены и сообщения)
+# Обновляем TURN пароль
+NEW_TURN=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 16)
+echo "TURN_PASS=$NEW_TURN" > /root/turn_credentials.txt
+docker rm -f coturn > /dev/null 2>&1
+docker run -d --name coturn --restart unless-stopped   -p 3478:3478/udp -p 3478:3478/tcp   coturn/coturn --realm=turn --user=chat:$NEW_TURN --lt-cred-mech --no-cli > /dev/null 2>&1
+
 docker restart pschat > /dev/null
 
 MSG="Login: ${LOGIN}

@@ -24,8 +24,8 @@ button{background:#000;color:#fff;border:none;padding:10px 20px;cursor:pointer;f
 async function go(){
 var r=await fetch("/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:document.getElementById("p").value})});
 var d=await r.json();
-if(d.ok){document.cookie="chat_token="+d.token+";path=/";location.href="/"}
-else{document.getElementById("e").innerText="Wrong password"}
+if(d.ok){location.href="/"}
+else{document.getElementById("e").innerText=d.blocked?"Blocked. Wait 5 minutes.":"Wrong password ("+d.remaining+" left)"}
 }
 </script>
 </body>

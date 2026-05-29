@@ -18,13 +18,33 @@ let msgId = 1;
 // Parse JSON
 app.use(express.json());
 
+// Rate limiting
+const loginAttempts = {};
+function isBlocked(ip) {
+  const rec = loginAttempts[ip];
+  if (!rec) return false;
+  if (rec.blocked && Date.now() - rec.blockedAt < 5 * 60 * 1000) return true;
+  if (rec.blocked && Date.now() - rec.blockedAt >= 5 * 60 * 1000) { delete loginAttempts[ip]; return false; }
+  return false;
+}
+function addFail(ip) {
+  if (!loginAttempts[ip]) loginAttempts[ip] = { fails: 0 };
+  loginAttempts[ip].fails++;
+  if (loginAttempts[ip].fails >= 3) { loginAttempts[ip].blocked = true; loginAttempts[ip].blockedAt = Date.now(); }
+}
+function resetFails(ip) { delete loginAttempts[ip]; }
+
 // Get current password from file
-function getPassword() {
+function getPasswordHash() {
   try {
     const data = fs.readFileSync("/app/credentials.txt", "utf8");
     const m = data.match(/^user:(.+)$/m);
     return m ? m[1].trim() : null;
   } catch(e) { return null; }
+}
+
+function hashPass(pass) {
+  return crypto.createHash("sha256").update(pass).digest("hex");
 }
 
 // Check token from cookie
@@ -43,15 +63,22 @@ app.get("/login", (req, res) => {
 
 // Auth endpoint
 app.post("/auth", (req, res) => {
+  const ip = req.headers["x-real-ip"] || req.ip;
+  if (isBlocked(ip)) return res.status(429).json({ ok: false, blocked: true, msg: "Too many attempts. Wait 5 minutes." });
   const pass = req.body.password;
-  const correct = getPassword();
-  if (pass && correct && pass === correct) {
+  const correctHash = getPasswordHash();
+  if (pass && correctHash && hashPass(pass) === correctHash) {
+    resetFails(ip);
     const token = crypto.randomBytes(32).toString("hex");
     tokens.add(token);
     setTimeout(() => tokens.delete(token), 24 * 60 * 60 * 1000);
-    return res.json({ ok: true, token });
+    res.cookie("chat_token", token, { httpOnly: true, secure: true, sameSite: "strict", path: "/", maxAge: 24*60*60*1000 });
+    return res.json({ ok: true });
   }
-  res.status(401).json({ ok: false });
+  addFail(ip);
+  const rec = loginAttempts[ip];
+  if (rec && rec.blocked) return res.status(429).json({ ok: false, blocked: true, msg: "Too many attempts. Wait 5 minutes." });
+  res.status(401).json({ ok: false, remaining: 3 - (rec ? rec.fails : 0) });
 });
 
 // Auth middleware for all other routes
@@ -73,6 +100,8 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   let nick = null;
+  let lastMsgTime = 0;
+  let lastFileTime = 0;
 
   socket.on("login", (data) => {
     const name = (data.nick || "").trim();
@@ -87,13 +116,20 @@ io.on("connection", (socket) => {
 
   socket.on("message", (data) => {
     if (!nick) return;
-    const msg = { id: msgId++, from: nick, text: data.text, time: Date.now() };
+    if (!data.text || data.text.length > 5000) return;
+    if (Date.now() - lastMsgTime < 500) return;
+    lastMsgTime = Date.now();
+    const msg = { id: msgId++, from: nick, text: data.text.substring(0, 5000), time: Date.now() };
     io.to("chat").emit("message", msg);
   });
 
   socket.on("file", (data) => {
     if (!nick) return;
-    io.to("chat").emit("file", { from: nick, name: data.name, type: data.type, url: data.url, time: Date.now() });
+    if (!data.url || data.url.length > 70 * 1024 * 1024) return;
+    if (Date.now() - lastFileTime < 10000) return;
+    lastFileTime = Date.now();
+    if (!data.name || data.name.length > 255) return;
+    io.to("chat").emit("file", { from: nick, name: data.name.substring(0, 255), type: data.type, url: data.url, time: Date.now() });
   });
 
   socket.on("typing", (status) => {

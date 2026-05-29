@@ -85,7 +85,7 @@ body{font-family:Monospace;background:#fff;height:100vh;overflow:hidden}
 <script src="/socket.io/socket.io.js"></script>
 <script>
 var socket=io();
-socket.on("connect_error",function(err){if(err.message==="unauthorized"){document.cookie="chat_token=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT";location.href="/login"}});
+socket.on("connect_error",function(err){if(err.message==="unauthorized"){location.href="/login"}});
 var myNick=null;
 var typingTimeout=null;
 var isTyping=false;
