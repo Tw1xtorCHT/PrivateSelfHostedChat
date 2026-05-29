@@ -68,4 +68,4 @@ Send `/start` to your Telegram bot for a reset button.
 
 ## License
 
-GPL-3.0
+MIT
