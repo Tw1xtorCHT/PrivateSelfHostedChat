@@ -1,76 +1,86 @@
 # PrivateSelfHostedChat
 
-Приватный самохостируемый чат с голосовыми звонками, автосменой паролей и управлением через Telegram.
+Private self-hosted chat with voice calls, auto-rotating passwords and Telegram bot management. Deploy on any VPS in 3 minutes with a single command.
 
-## Возможности
+## Features
 
-- Анонимный чат без регистрации
-- P2P голосовые звонки (WebRTC)
-- Токен-авторизация через страницу входа
-- Автосмена пароля каждый час
-- Telegram бот с кнопкой сброса
-- Передача файлов до 50 МБ
-- HTTPS с автосертификатом
-- Бэкап и восстановление одной командой
+- Anonymous chat - no registration, no accounts
+- P2P voice calls (WebRTC) - server never hears the conversation
+- Token-based authentication with custom login page
+- Auto-rotating password every hour
+- Telegram bot with one-tap chat reset
+- File sharing up to 50 MB
+- HTTPS with automatic Let's Encrypt certificate
+- Backup and restore with a single command
 
-## Требования
+## Requirements
 
 - Ubuntu 20.04 / 22.04 / 24.04
-- VPS с 1 ГБ RAM
-- Домен (бесплатно на [duckdns.org](https://duckdns.org))
-- Telegram бот ([@BotFather](https://t.me/BotFather))
-- Ваш Chat ID ([@userinfobot](https://t.me/userinfobot))
+- VPS with 1 GB RAM
+- Domain (free at [duckdns.org](https://duckdns.org))
+- Telegram bot ([@BotFather](https://t.me/BotFather))
+- Your Chat ID ([@userinfobot](https://t.me/userinfobot))
 
-## Установка
+## Installation
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tw1xtorCHT/PrivateSelfHostedChat/main/install.sh | bash
 ```
 
-Скрипт спросит:
-- Токен Telegram бота
-- Ваш Chat ID
-- Домен
+The script will ask for:
+- Telegram bot token
+- Your Chat ID
+- Domain name
 
-Всё остальное установится автоматически за 3 минуты.
+Everything else installs automatically in about 3 minutes.
 
-## Управление
+## Management
 
-### Telegram бот
-Напишите боту `/start` — кнопка сброса чата и смены пароля.
+### Telegram bot
+Send `/start` to your bot to get a button for resetting the chat and generating a new password.
 
-### Команды на сервере
+### Server commands
 
-Сбросить чат и сменить пароль:
+Reset chat and change password:
 ```bash
 /root/rotate_password.sh
 ```
 
-Бэкап:
+Backup:
 ```bash
 /root/backup.sh
 ```
 
-Восстановление:
+Restore:
 ```bash
 /root/restore.sh
 ```
 
-## Архитектура
-## Безопасность
+## Architecture
 
-- Сообщения только в оперативной памяти
-- При перезапуске всё стирается
-- Открытый код без бэкдоров
-- P2P звонки — сервер не слышит разговор
-- Уровень защиты как в обычных чатах Telegram
+```
+Browser -> HTTPS (Caddy) -> Nginx -> Auth Server (token check)
+                                  -> Chat (m1k1o/chat)
+                                  -> Signal Server (calls)
+Calls -> WebRTC P2P (direct between browsers)
+TURN -> Coturn (fallback if P2P fails)
+Management -> Telegram Bot -> auto-reset every hour
+```
 
-## Благодарности
+## Security
 
-- [m1k1o/chat](https://github.com/m1k1o/chat) — движок чата (Socket.io, Node.js)
-- [Caddy](https://caddyserver.com) — автоматический HTTPS
-- [coturn](https://github.com/coturn/coturn) — TURN сервер для звонков
+- Messages stored in RAM only, nothing written to disk
+- Full wipe on container restart
+- Open source, no backdoors, no analytics, no trackers
+- P2P calls, server only connects peers, never hears audio
+- Protection level comparable to standard Telegram chats
 
-## Лицензия
+## Credits
+
+- [m1k1o/chat](https://github.com/m1k1o/chat) - chat engine (Socket.io, Node.js)
+- [Caddy](https://caddyserver.com) - automatic HTTPS
+- [coturn](https://github.com/coturn/coturn) - TURN server for calls
+
+## License
 
 GPL-3.0
