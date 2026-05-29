@@ -1,0 +1,9 @@
+*.htpasswd
+chat_credentials.txt
+turn_credentials.txt
+*.log
+*.pem
+*.key
+node_modules/
+caddy_data/
+backups/
