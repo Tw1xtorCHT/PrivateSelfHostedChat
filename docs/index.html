@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,39 +7,32 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Courier New', Monospace; background: #fff; color: #000; }
-        
         .hero { text-align: center; padding: 80px 20px 40px; border-bottom: 1px solid #000; }
         .hero h1 { font-size: 36px; margin-bottom: 15px; }
         .hero p { font-size: 16px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.6; }
-        
+        .hero .tag { display: inline-block; font-size: 12px; border: 1px solid #000; padding: 3px 10px; margin-top: 15px; }
         .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; padding: 60px 40px; max-width: 1000px; margin: 0 auto; }
         .feature { padding: 20px; border: 1px solid #000; }
         .feature h3 { margin-bottom: 10px; font-size: 16px; }
         .feature p { font-size: 13px; color: #555; line-height: 1.5; }
-        
         .install { text-align: center; padding: 60px 20px; background: #000; color: #fff; }
         .install h2 { margin-bottom: 30px; font-size: 24px; }
-        
         .steps { max-width: 700px; margin: 0 auto; text-align: left; }
         .step { margin-bottom: 30px; }
         .step h3 { margin-bottom: 8px; font-size: 16px; }
         .step p { font-size: 13px; color: #ccc; line-height: 1.5; margin-bottom: 10px; }
         .step a { color: #fff; }
-        
         .cmd { background: #1a1a1a; border: 1px solid #333; padding: 15px 20px; font-family: monospace; font-size: 14px; color: #0f0; position: relative; margin-top: 10px; overflow-x: auto; white-space: nowrap; }
         .cmd .copy-btn { position: absolute; right: 10px; top: 10px; background: #333; color: #fff; border: none; padding: 5px 10px; cursor: pointer; font-family: monospace; font-size: 12px; }
         .cmd .copy-btn:hover { background: #555; }
-        
-        .how { padding: 60px 40px; max-width: 800px; margin: 0 auto; }
-        .how h2 { text-align: center; margin-bottom: 40px; font-size: 24px; }
-        .schema { text-align: center; padding: 30px; border: 1px solid #000; margin-bottom: 30px; font-size: 13px; line-height: 2; }
-        
+        .arch { padding: 60px 40px; max-width: 800px; margin: 0 auto; }
+        .arch h2 { text-align: center; margin-bottom: 40px; font-size: 24px; }
+        .schema { text-align: center; padding: 30px; border: 1px solid #000; font-size: 13px; line-height: 2.2; }
         .security { padding: 60px 40px; border-top: 1px solid #000; }
         .security h2 { text-align: center; margin-bottom: 30px; font-size: 24px; }
         .sec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto; }
         .sec-item { padding: 15px; font-size: 13px; line-height: 1.5; }
         .sec-item strong { display: block; margin-bottom: 5px; }
-        
         .footer { text-align: center; padding: 30px; border-top: 1px solid #000; font-size: 12px; color: #999; }
         .footer a { color: #000; }
     </style>
@@ -48,101 +41,110 @@
 
 <div class="hero">
     <h1>PrivateSelfHostedChat</h1>
-    <p>Приватный самохостируемый чат с голосовыми звонками. Без регистрации, без логов, без следов. Разворачивается на любом VPS за 3 минуты одной командой.</p>
+    <p>Private self-hosted chat with P2P voice calls. No registration, no logs, no traces. Deploy on any VPS in 3 minutes with a single command.</p>
+    <div class="tag">Custom engine - Node.js + Socket.io + WebRTC</div>
 </div>
 
 <div class="features">
     <div class="feature">
-        <h3>&#128172; Анонимный чат</h3>
-        <p>Без регистрации и аккаунтов. Зашёл по ссылке, ввёл пароль, общаешься. Закрыл вкладку — всё исчезло.</p>
+        <h3>&#128172; Anonymous Chat</h3>
+        <p>No registration or accounts. Enter a link, type a password, chat. Close the tab and everything disappears.</p>
     </div>
     <div class="feature">
-        <h3>&#128222; P2P звонки</h3>
-        <p>Голосовые звонки через WebRTC. Трафик идёт напрямую между браузерами. Сервер не слышит разговор.</p>
+        <h3>&#128222; P2P Voice Calls</h3>
+        <p>Voice calls via WebRTC with audio level indicators. Traffic goes directly between browsers. Server never hears the conversation.</p>
     </div>
     <div class="feature">
-        <h3>&#128274; Автосмена пароля</h3>
-        <p>Пароль меняется автоматически каждый час. Новый пароль приходит в Telegram. Старые сессии уничтожаются.</p>
+        <h3>&#128274; Auto-rotating Password</h3>
+        <p>Password changes automatically every hour. New password sent to Telegram. Old sessions destroyed. Users auto-kicked.</p>
     </div>
     <div class="feature">
-        <h3>&#129302; Telegram бот</h3>
-        <p>Управление чатом через бота. Одна кнопка — сброс чата, смена пароля, уведомление в Telegram.</p>
+        <h3>&#129302; Telegram Bot</h3>
+        <p>Manage chat via bot. One tap to reset chat, change password, get notified.</p>
     </div>
     <div class="feature">
-        <h3>&#128451; Передача файлов</h3>
-        <p>PDF, фото, документы до 50 МБ. Перетащи файл в окно чата и отправь. После очистки — стёрто навсегда.</p>
+        <h3>&#128451; File Sharing</h3>
+        <p>Drag and drop files up to 50 MB. PDFs, photos, documents. Stored in RAM only, wiped on reset.</p>
     </div>
     <div class="feature">
         <h3>&#128275; HTTPS</h3>
-        <p>Автоматический SSL сертификат через Let's Encrypt. Весь трафик зашифрован. Уровень защиты как в Telegram.</p>
+        <p>Automatic SSL certificate via Let's Encrypt. All traffic encrypted. Zero config.</p>
+    </div>
+    <div class="feature">
+        <h3>&#128247; Zero Disk Storage</h3>
+        <p>Messages and files live in RAM only. Nothing is written to disk. Container restart equals full wipe.</p>
+    </div>
+    <div class="feature">
+        <h3>&#9881; 4 Containers</h3>
+        <p>Minimal footprint: chat engine, nginx, caddy, coturn. Runs on 1 GB RAM VPS.</p>
     </div>
 </div>
 
 <div class="install">
-    <h2>Установка за 3 минуты</h2>
+    <h2>Install in 3 minutes</h2>
     <div class="steps">
         <div class="step">
-            <h3>Шаг 1 — Создайте Telegram бота</h3>
-            <p>Откройте <a href="https://t.me/BotFather" target="_blank">@BotFather</a> в Telegram, отправьте /newbot и скопируйте токен.<br>
-            Узнайте свой Chat ID у <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a>.</p>
+            <h3>Step 1 - Create a Telegram bot</h3>
+            <p>Open <a href="https://t.me/BotFather" target="_blank">@BotFather</a>, send /newbot and copy the token.<br>
+            Get your Chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a>.</p>
         </div>
         <div class="step">
-            <h3>Шаг 2 — Получите бесплатный домен</h3>
-            <p>Зайдите на <a href="https://www.duckdns.org" target="_blank">duckdns.org</a>, создайте поддомен и укажите IP вашего сервера.</p>
+            <h3>Step 2 - Get a free domain</h3>
+            <p>Go to <a href="https://www.duckdns.org" target="_blank">duckdns.org</a>, create a subdomain and point it to your server IP.</p>
         </div>
         <div class="step">
-            <h3>Шаг 3 — Запустите установку</h3>
-            <p>Подключитесь к VPS по SSH и выполните команду:</p>
+            <h3>Step 3 - Run the installer</h3>
+            <p>SSH into your VPS and run:</p>
             <div class="cmd">
                 <span id="install-cmd">curl -fsSL https://raw.githubusercontent.com/Tw1xtorCHT/PrivateSelfHostedChat/main/install.sh | bash</span>
                 <button class="copy-btn" onclick="copyCmd()">Copy</button>
             </div>
-            <p style="margin-top: 10px;">Скрипт спросит токен бота, Chat ID и домен. Всё остальное установится автоматически.</p>
         </div>
     </div>
 </div>
 
-<div class="how">
-    <h2>Как это работает</h2>
+<div class="arch">
+    <h2>Architecture</h2>
     <div class="schema">
-        Браузер &rarr; HTTPS (Caddy) &rarr; Auth (Token) &rarr; Chat (m1k1o/chat)<br>
-        Звонки &rarr; Signal Server &rarr; P2P (WebRTC) &rarr; Напрямую между браузерами<br>
-        Управление &rarr; Telegram Bot &rarr; Автосброс каждый час
+        Browser &rarr; HTTPS (Caddy) &rarr; Nginx &rarr; PSChat Engine<br>
+        Auth: token-based, built into the engine<br>
+        Calls: WebRTC P2P, direct between browsers<br>
+        TURN: Coturn fallback if P2P fails<br>
+        Management: Telegram Bot &rarr; auto-reset every hour
     </div>
 </div>
 
 <div class="security">
-    <h2>Безопасность</h2>
+    <h2>Security</h2>
     <div class="sec-grid">
         <div class="sec-item">
-            <strong>&#9989; Сообщения только в RAM</strong>
-            Ничего не пишется на диск. При перезапуске контейнера всё стирается безвозвратно.
+            <strong>Zero disk storage</strong>
+            Messages and files exist only in RAM. Container restart wipes everything permanently.
         </div>
         <div class="sec-item">
-            <strong>&#9989; Открытый код</strong>
-            Весь код доступен на GitHub. Без бэкдоров, без аналитики, без трекеров.
+            <strong>Open source</strong>
+            Full source code on GitHub. No backdoors, no analytics, no trackers.
         </div>
         <div class="sec-item">
-            <strong>&#9989; Свой сервер</strong>
-            Данные только на вашем VPS. Никаких третьих лиц, облаков и корпораций.
+            <strong>Your server</strong>
+            Data stays on your VPS. No third parties, no clouds, no corporations.
         </div>
         <div class="sec-item">
-            <strong>&#9989; P2P звонки</strong>
-            Аудио идёт напрямую между устройствами. Сервер только сводит участников.
+            <strong>P2P calls</strong>
+            Audio goes directly between devices. Server only connects peers, never hears audio.
         </div>
     </div>
 </div>
 
 <div class="footer">
-    <p>PrivateSelfHostedChat &mdash; <a href="https://github.com/Tw1xtorCHT/PrivateSelfHostedChat" target="_blank">GitHub</a></p>
+    <p>PrivateSelfHostedChat - <a href="https://github.com/Tw1xtorCHT/PrivateSelfHostedChat" target="_blank">GitHub</a></p>
 </div>
 
 <script>
 function copyCmd() {
-    const text = document.getElementById('install-cmd').innerText;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(document.getElementById('install-cmd').innerText);
     document.querySelector('.copy-btn').innerText = 'Copied!';
-    setTimeout(() => document.querySelector('.copy-btn').innerText = 'Copy', 2000);
+    setTimeout(function(){ document.querySelector('.copy-btn').innerText = 'Copy' }, 2000);
 }
 </script>
 
